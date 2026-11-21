@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { ADDRESS, CONTACT_URL, SECTIONS } from "./content";
-import { scroll, scrollToSection } from "./scroll";
+import { orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection } from "./scroll";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
 import { hotspotEls, HOTSPOT_SECTIONS } from "./hotspots";
@@ -11,6 +11,44 @@ import { hotspotEls, HOTSPOT_SECTIONS } from "./hotspots";
 export default function Experience() {
   const [active, setActive] = useState(0);
   const [ready, setReady] = useState(false);
+  const [rotated, setRotated] = useState(false);
+
+  // Cliquer-glisser (ou glisser au doigt) pour tourner la maison à 360°.
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return;
+    const el = e.currentTarget;
+    el.setPointerCapture(e.pointerId);
+    orbit.dragging = true;
+    el.classList.add("is-dragging");
+    let lx = e.clientX;
+    let ly = e.clientY;
+    const move = (ev: PointerEvent) => {
+      orbit.yaw -= (ev.clientX - lx) * 0.008;
+      orbit.pitch = Math.min(PITCH_MAX, Math.max(PITCH_MIN, orbit.pitch + (ev.clientY - ly) * 0.005));
+      lx = ev.clientX;
+      ly = ev.clientY;
+      setRotated(true);
+    };
+    const up = () => {
+      orbit.dragging = false;
+      el.classList.remove("is-dragging");
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", up);
+    };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+  };
+  const recenter = () => {
+    // revient par le chemin le plus court
+    orbit.yaw = Math.round(orbit.yaw / (Math.PI * 2)) * Math.PI * 2;
+    orbit.pitch = 0;
+    setRotated(false);
+    setTimeout(() => {
+      orbit.yaw = orbit.y = 0;
+    }, 900);
+  };
   const last = SECTIONS.length - 1;
 
   useEffect(() => {
@@ -31,9 +69,20 @@ export default function Experience() {
 
   return (
     <>
-      <div className="stage" aria-hidden>
+      <div className="stage" aria-hidden onPointerDown={onPointerDown}>
         <Scene onReady={() => setReady(true)} />
       </div>
+      <button className={`recenter ${rotated ? "is-visible" : ""}`} onClick={recenter}>
+        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden>
+          <path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Recentrer
+      </button>
+      {!rotated && (
+        <div className="drag-hint" aria-hidden>
+          Cliquez-glissez pour tourner la maison
+        </div>
+      )}
       <div className="hotspots">
         {HOTSPOT_SECTIONS.map((section, i) => {
           const s = SECTIONS[section];
@@ -62,10 +111,6 @@ export default function Experience() {
       <header className="topbar">
         <button className="brand" onClick={() => scrollToSection(0)}>
           <span className="brand-mark">ECH</span>
-          <span className="brand-name">
-            Experts Conseil Habitat
-            <small>L'excellence sur votre toit</small>
-          </span>
         </button>
         <a className="btn btn-primary btn-sm" href={CONTACT_URL}>
           Étude gratuite
@@ -94,7 +139,7 @@ export default function Experience() {
           return (
             <section key={s.id} id={s.id} className={`panel ${active === i ? "is-active" : ""}`}>
               <div className={`card ${isHero || isEnd ? "card-lg" : ""}`}>
-                {isHero && <p className="eyebrow">Experts Conseil Habitat · Aix-en-Provence</p>}
+                {isHero && <p className="eyebrow">Aix-en-Provence</p>}
                 {s.index && (
                   <p className="eyebrow">
                     <span className="eyebrow-num">{s.index}</span> Prestation

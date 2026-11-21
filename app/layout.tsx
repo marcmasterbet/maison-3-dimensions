@@ -3,9 +3,9 @@ import "@fontsource-variable/manrope";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Experts Conseil Habitat — Le diagnostic de votre maison, en 3D",
+  title: "Le diagnostic de votre maison, en 3D",
   description:
-    "Toiture, charpente, isolation, zinguerie, façade, humidité, qualité de l'air : découvrez en 3D comment Experts Conseil Habitat diagnostique et traite votre maison à Aix-en-Provence.",
+    "Toiture, charpente, isolation, zinguerie, façade, humidité, qualité de l'air : découvrez en 3D comment nous diagnostiquons et traitons votre maison à Aix-en-Provence.",
 };
 
 export const viewport: Viewport = { themeColor: "#061a40" };

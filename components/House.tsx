@@ -341,8 +341,8 @@ function Ventilation({ mats }: { mats: Mats }) {
 // ---------------------------------------------------------------------------
 // Flux d'air (qualité de l'air intérieur)
 // ---------------------------------------------------------------------------
-function AirFlow() {
-  const COUNT = 900;
+function AirFlow({ count }: { count: number }) {
+  const COUNT = count;
   const { geo, data, curves } = useMemo(() => {
     const vent = VENT_POS;
     const vmc = VMC_POS;
@@ -384,7 +384,7 @@ function AirFlow() {
       jz: (Math.random() - 0.5) * 0.35,
     }));
     return { geo, data, curves };
-  }, []);
+  }, [COUNT]);
 
   const mat = useMemo(
     () =>
@@ -434,7 +434,7 @@ function AirFlow() {
 // ---------------------------------------------------------------------------
 // Maison complète
 // ---------------------------------------------------------------------------
-export default function House() {
+export default function House({ light = false }: { light?: boolean }) {
   const mats = useMaterials();
   const geo = useMemo(
     () => ({
@@ -476,7 +476,7 @@ export default function House() {
       <Pieces items={items.caps} geometry={geo.cap} material={mats.tiles} getA={timeline.tiles} drop={2.4} tint={0.1} />
       <Pieces items={items.gutters} geometry={geo.pipe} material={mats.zinc} getA={timeline.gutters} drop={1.6} tint={0} />
       <Pieces items={items.grilles} geometry={geo.box} material={mats.grille} getA={timeline.grilles} drop={1} tint={0} />
-      <AirFlow />
+      <AirFlow count={light ? 450 : 900} />
     </group>
   );
 }

@@ -6,6 +6,17 @@ export const scroll = {
   p: 0, // valeur lissée, utilisée par la 3D
 };
 
+// Rotation libre choisie par l'utilisateur (cliquer-glisser), conservée d'une section à l'autre.
+export const orbit = {
+  yaw: 0, // cible (radians, illimité = 360°)
+  pitch: 0, // cible (radians, borné)
+  y: 0, // valeurs lissées
+  x: 0,
+  dragging: false,
+};
+export const PITCH_MIN = -0.35;
+export const PITCH_MAX = 0.55;
+
 export const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 export const smooth = (a: number, b: number, x: number) => {
   const t = clamp((x - a) / (b - a));

@@ -1,15 +1,15 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Lightformer } from "@react-three/drei";
+import { AdaptiveDpr, Environment, Lightformer, PerformanceMonitor } from "@react-three/drei";
 import { EffectComposer, N8AO, Vignette } from "@react-three/postprocessing";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import House, { VMC_POS, VENT_POS } from "./House";
 import { D, T, THETA, W, WALL_H, gutterLine } from "./geometry";
 import { SECTIONS } from "./content";
 import { hotspotEls } from "./hotspots";
-import { bell, scroll, smooth } from "./scroll";
+import { bell, orbit, scroll, smooth } from "./scroll";
 
 const BG = "#061a40";
 
@@ -17,14 +17,14 @@ const BG = "#061a40";
 const v = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 const SHOTS: [THREE.Vector3, THREE.Vector3][] = [
   [v(11.5, 7.2, 12.5), v(0, 2.9, 0)], // accueil
-  [v(5, 1.8, 11), v(1.6, 1.1, 1)], // humidité
-  [v(-3, 3.2, 12.5), v(1.4, 1.8, 0)], // façade
-  [v(-11.5, 7.5, 6.5), v(-1.2, 4.2, 0)], // charpente
-  [v(-8.5, 8, 5), v(0.2, 3.4, 0)], // isolation
+  [v(3.6, 2.2, 11.5), v(0.3, 1.2, 1)], // humidité
+  [v(-3.6, 3.4, 12.5), v(0.2, 1.8, 0)], // façade
+  [v(-11.5, 7.5, 6.5), v(-0.8, 3.0, 0)], // charpente
+  [v(-8.5, 8, 5), v(0.2, 2.8, 0)], // isolation
   [v(8.5, 12, 11), v(0.8, 3.9, 0)], // toiture
   [v(9.5, 4.2, 10), v(3.2, 2.7, 2)], // zinguerie
   [v(-6, 7.5, 12), v(0, 3.2, 0)], // air
-  [v(6, 1.6, 11), v(0.6, 0.9, 1)], // rongeurs
+  [v(6, 2.2, 11), v(0.4, 1.6, 1)], // rongeurs
   [v(-12, 7, 12), v(0, 2.9, 0)], // contact
 ];
 
@@ -48,10 +48,18 @@ function CameraRig() {
     const ang = Math.sin(state.clock.elapsedTime * 0.12) * 0.28 * idle + pointer.x * 0.06;
     const wide = size.width >= 900;
     const portrait = size.height > size.width;
-    const rel = pos.clone().sub(tgt).multiplyScalar(wide ? 1.42 : portrait ? 2.35 : 1.5);
-    rel.applyAxisAngle(THREE.Object3D.DEFAULT_UP, ang);
-    rel.y += pointer.y * 0.4;
-    camera.position.lerp(tgt.clone().add(rel), 1 - Math.exp(-6 * dt));
+    const rel = pos.clone().sub(tgt).multiplyScalar(wide ? 1.95 : portrait ? 3.0 : 2.0);
+    // rotation libre de l'utilisateur
+    orbit.y = THREE.MathUtils.damp(orbit.y, orbit.yaw, 8, dt);
+    orbit.x = THREE.MathUtils.damp(orbit.x, orbit.pitch, 8, dt);
+    const touched = Math.abs(orbit.yaw) > 0.001 || Math.abs(orbit.pitch) > 0.001;
+    rel.applyAxisAngle(THREE.Object3D.DEFAULT_UP, (touched ? 0 : ang) + orbit.y);
+    const side = new THREE.Vector3().crossVectors(THREE.Object3D.DEFAULT_UP, rel).normalize();
+    const elev = Math.asin(THREE.MathUtils.clamp(rel.y / rel.length(), -1, 1));
+    const pitch = THREE.MathUtils.clamp(orbit.x, 0.06 - elev, 1.35 - elev);
+    rel.applyAxisAngle(side, -pitch);
+    if (!touched) rel.y += pointer.y * 0.4;
+    camera.position.lerp(tgt.clone().add(rel), orbit.dragging ? 1 : 1 - Math.exp(-6 * dt));
     look.current.lerp(tgt, 1 - Math.exp(-6 * dt));
     camera.lookAt(look.current);
 
@@ -118,24 +126,33 @@ function Ground() {
   );
 }
 
+// Qualité adaptée à l'appareil : les téléphones démarrent en mode allégé,
+// et tout appareil qui rame descend automatiquement d'un cran.
+const isMobile = () =>
+  typeof window !== "undefined" && (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 900);
+
 export default function Scene({ onReady }: { onReady?: () => void }) {
+  const mobile = useMemo(isMobile, []);
+  const [high, setHigh] = useState(!mobile);
   return (
     <Canvas
       shadows
-      dpr={[1, 2]}
-      camera={{ position: SHOTS[0][0].toArray(), fov: 32, near: 0.5, far: 120 }}
-      gl={{ antialias: false, powerPreference: "high-performance" }}
+      dpr={high ? [1, 2] : [1, 1.5]}
+      camera={{ position: SHOTS[0][0].toArray(), fov: 32, near: 0.5, far: 160 }}
+      gl={{ antialias: mobile, powerPreference: "high-performance" }}
       onCreated={() => setTimeout(() => onReady?.(), 250)}
     >
+      <PerformanceMonitor onDecline={() => setHigh(false)} flipflops={2} />
+      <AdaptiveDpr pixelated={false} />
       <color attach="background" args={[BG]} />
-      <fog attach="fog" args={[BG, 28, 62]} />
+      <fog attach="fog" args={[BG, 40, 95]} />
 
       <hemisphereLight args={["#bcd3ff", "#0a1a3a", 0.55]} />
       <directionalLight
         position={[9, 15, 8]}
         intensity={2.4}
         castShadow
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={high ? [2048, 2048] : [1024, 1024]}
         shadow-camera-left={-11}
         shadow-camera-right={11}
         shadow-camera-top={11}
@@ -151,15 +168,17 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
         <Lightformer intensity={0.8} position={[8, 3, -6]} rotation-y={-Math.PI / 2} scale={[6, 2, 1]} color="#ffd9b0" />
       </Environment>
 
-      <House />
+      <House light={!high} />
       <Ground />
       <HotspotProjector />
 
       <CameraRig />
-      <EffectComposer multisampling={4}>
-        <N8AO aoRadius={0.9} intensity={2.2} distanceFalloff={0.6} quality="medium" />
-        <Vignette offset={0.25} darkness={0.55} />
-      </EffectComposer>
+      {high && (
+        <EffectComposer multisampling={4}>
+          <N8AO aoRadius={0.9} intensity={2.2} distanceFalloff={0.6} quality="medium" />
+          <Vignette offset={0.25} darkness={0.55} />
+        </EffectComposer>
+      )}
     </Canvas>
   );
 }
