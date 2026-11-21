@@ -184,6 +184,17 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
 .hotspot:hover .hotspot-label, .hotspot[data-active="1"] .hotspot-label { opacity: 1; transform: none; }
 @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
 
+/* ---------- Écran de fin ---------- */
+.portraits { display: flex; margin-bottom: 22px; }
+.portraits img {
+  width: 84px; height: 84px; border-radius: 50%; object-fit: cover; display: block;
+  border: 3px solid var(--bg); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22), 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+.portraits img + img { margin-left: -18px; }
+.end-title { font-size: clamp(22px, 2.05vw, 31px); line-height: 1.16; }
+.end-title span { display: block; text-wrap: balance; }
+.end-title span + span { margin-top: 10px; color: var(--accent); }
+
 /* ---------- Accueil façon landing page ---------- */
 .panel-hero { justify-content: center; align-items: flex-start; padding-top: clamp(48px, 8vh, 100px); }
 .panel-hero .card-lg { width: 100%; padding: 0; text-align: center; }
@@ -204,6 +215,9 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
   .points { margin-top: 14px; gap: 6px; }
   .scroll-hint { display: none; }
   .drag-hint { display: none; }
+  .portraits { margin-bottom: 14px; }
+  .portraits img { width: 64px; height: 64px; }
+  .end-title { font-size: 22px; }
   .logo { top: 16px; left: 16px; }
   .logo img { height: 40px; }
   .recenter { top: 16px; bottom: auto; right: 16px; height: 38px; }
@@ -212,11 +226,11 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
   .brand-mark { width: 36px; height: 36px; }
   .brand-name { font-size: 14px; }
   h1 { font-size: 34px; }
-  .panel-hero { align-items: flex-end; padding-top: 24px; }
-  .panel-hero .card-lg { text-align: left; }
-  .panel-hero h1 { font-size: 5.6vw; }
-  .panel-hero .lead { margin-left: 0; font-size: 15px; }
-  .panel-hero .actions { justify-content: flex-start; }
+  .panel-hero { align-items: flex-start; padding: 74px 16px 24px; }
+  .panel-hero h1 { font-size: min(6.3vw, 40px); }
+  .panel-hero .lead { margin-top: 10px; font-size: clamp(12.5px, 3.5vw, 16px); line-height: 1.5; max-width: 34em; }
+  .panel-hero .actions { margin-top: 16px; }
+  .panel-hero .btn { height: 46px; padding: 0 20px; font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

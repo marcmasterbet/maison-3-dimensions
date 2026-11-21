@@ -32,7 +32,10 @@ const SHOTS: [THREE.Vector3, THREE.Vector3][] = [
 const HERO_GAP = 18; // marge sous le bouton (px)
 const HERO_BOTTOM = 44; // marge en bas d'écran (px)
 const HOUSE_FIT = 0.97; // hauteur de la maison (fraction d'écran) à distance 1
+const HOUSE_FIT_W = 0.98; // largeur de la maison (fraction de la hauteur d'écran) à distance 1
 const HOUSE_CENTER = 0.0; // correction du centre visuel (fraction d'écran)
+
+const MOBILE_K = [1, 1.05, 1, 1, 1.15, 0.88, 1.22, 1.05, 1.12, 0.95];
 
 function CameraRig() {
   const { camera, size, pointer } = useThree();
@@ -61,11 +64,20 @@ function CameraRig() {
     // Accueil desktop : la maison occupe exactement la place libre sous le bouton (mesurée en px).
     const top = (layout.heroBottom || size.height * 0.4) + HERO_GAP;
     const availPx = Math.max(120, size.height - top - HERO_BOTTOM);
-    const heroDist = THREE.MathUtils.clamp(HOUSE_FIT / (availPx / size.height), 1.2, 4);
-    const heroOy = -(top + availPx / 2 - size.height / 2) + size.height * HOUSE_CENTER;
-    const base = wide ? 1.95 : aspect < 0.6 ? 3.0 : portrait ? 2.3 : 2.0;
-    const mobileZoom = 1 - (aspect < 0.6 ? 0.3 : 0.05) * heroK;
-    const dist = wide ? THREE.MathUtils.lerp(base, heroDist, heroK) : base * mobileZoom;
+    // la maison doit tenir en hauteur dans la zone libre ET en largeur dans l'écran
+    const heroDist = THREE.MathUtils.clamp(
+      Math.max(HOUSE_FIT / (availPx / size.height), HOUSE_FIT_W / aspect),
+      1.2,
+      6
+    );
+    // si la largeur limite la taille (téléphone), la maison remonte vers le bouton au lieu de flotter au milieu
+    const housePx = (HOUSE_FIT / heroDist) * size.height;
+    const centerY = top + THREE.MathUtils.lerp(Math.min(availPx, housePx + 20) / 2, availPx / 2, 0.4);
+    const heroOy = -(centerY - size.height / 2) + size.height * HOUSE_CENTER;
+    // sur téléphone, recul ajusté par section pour que la maison ne touche jamais les bords
+    const mk = THREE.MathUtils.lerp(MOBILE_K[i], MOBILE_K[i + 1], e);
+    const base = wide ? 1.95 : aspect < 0.6 ? 3.1 * mk : portrait ? 2.3 : 2.0;
+    const dist = THREE.MathUtils.lerp(base, heroDist, heroK);
     const rel = pos.clone().sub(tgt).multiplyScalar(dist);
     // rotation libre de l'utilisateur
     orbit.y = THREE.MathUtils.damp(orbit.y, orbit.yaw, 8, dt);
@@ -84,7 +96,8 @@ function CameraRig() {
     // Décale le rendu pour laisser la place au texte (à gauche sur desktop, en bas sur mobile)
     const cam = camera as THREE.PerspectiveCamera;
     const ox = wide ? -size.width * 0.17 * (1 - hero) : 0;
-    const oy = wide ? heroOy * hero : size.height * (aspect < 0.6 ? 0.26 : portrait ? 0.16 : 0.12);
+    const mobileOy = size.height * (aspect < 0.6 ? 0.25 : portrait ? 0.16 : 0.12);
+    const oy = wide ? heroOy * hero : THREE.MathUtils.lerp(mobileOy, heroOy, heroK);
     cam.fov = wide ? 32 : 44;
     cam.setViewOffset(size.width, size.height, ox, oy, size.width, size.height);
     cam.updateProjectionMatrix();

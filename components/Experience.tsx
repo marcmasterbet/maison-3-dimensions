@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { CONTACT_URL, HERO_CTA_LABEL, HERO_CTA_URL, SECTIONS } from "./content";
+import { END_CTA_LABEL, END_CTA_URL, END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, PORTRAITS, SECTIONS } from "./content";
 import { layout, orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection } from "./scroll";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
@@ -160,8 +160,25 @@ export default function Experience() {
                     <span className="eyebrow-num">{s.index}</span> Prestation
                   </p>
                 )}
-                {isEnd && <p className="eyebrow">Étude gratuite et sans engagement</p>}
-                {isHero || isEnd ? <h1>{s.title}</h1> : <h2>{s.title}</h2>}
+                {isEnd && (
+                  <div className="portraits">
+                    {PORTRAITS.map((src) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={src} src={src} alt="" width={320} height={320} loading="lazy" />
+                    ))}
+                  </div>
+                )}
+                {isHero ? (
+                  <h1>{s.title}</h1>
+                ) : isEnd ? (
+                  <h2 className="end-title">
+                    {END_LINES.map((l) => (
+                      <span key={l}>{l}</span>
+                    ))}
+                  </h2>
+                ) : (
+                  <h2>{s.title}</h2>
+                )}
                 <p className="lead">{s.text}</p>
                 {s.points && (
                   <ul className="points">
@@ -178,16 +195,11 @@ export default function Experience() {
                   </div>
                 )}
                 {isEnd && (
-                  <>
-                    <div className="actions">
-                      <a className="btn btn-primary" href={CONTACT_URL}>
-                        Demander mon étude gratuite
-                      </a>
-                      <button className="btn btn-ghost" onClick={() => scrollToSection(0)}>
-                        Revoir la maison ↑
-                      </button>
-                    </div>
-                  </>
+                  <div className="actions">
+                    <a className="btn btn-primary" href={END_CTA_URL}>
+                      {END_CTA_LABEL}
+                    </a>
+                  </div>
                 )}
               </div>
               {isHero && (

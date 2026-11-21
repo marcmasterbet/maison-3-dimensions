@@ -8,6 +8,12 @@ export const ADDRESS = "Les bureaux de l'Arche, 13090 Aix-en-Provence";
 export const HERO_CTA_URL = "#";
 export const HERO_CTA_LABEL = "Je découvre les possibilités gratuitement";
 
+// Écran de fin (message de l'agence)
+export const END_LINES = ["Pas un site assemblé, mais codé.", "Pas des mots pour remplir, mais pour faire agir."];
+export const END_CTA_LABEL = "Je réserve mon échange gratuit";
+export const END_CTA_URL = "#"; // à remplacer par le lien de prise de rendez-vous
+export const PORTRAITS = ["/portrait-1.jpg", "/portrait-2.jpg"];
+
 export type Section = {
   id: string;
   index: string;
@@ -23,7 +29,7 @@ export const SECTIONS: Section[] = [
     id: "accueil",
     index: "",
     short: "Accueil",
-    title: "Votre site n'a plus de limites.",
+    title: "Votre site n'a plus de limites",
     text:
       "Voici une maquette 3D interactive, créée spécialement pour vous, qui illustre ce que nous sommes capables de réaliser pour votre futur site internet.",
   },
@@ -103,8 +109,8 @@ export const SECTIONS: Section[] = [
     id: "contact",
     index: "",
     short: "Contact",
-    title: "Votre maison mérite un vrai diagnostic.",
+    title: "Pas un site assemblé, mais codé.",
     text:
-      "Maisons individuelles, biens de caractère et maisons de prestige : parlons de votre projet.",
+      "Ensemble, nous réunissons nos deux expertises pour créer des sites internet aussi performants techniquement que commercialement.",
   },
 ];
