@@ -20,15 +20,29 @@ a { color: inherit; text-decoration: none; }
 .stage { position: fixed; inset: 0; z-index: 0; cursor: grab; touch-action: pan-y; }
 .stage.is-dragging { cursor: grabbing; }
 .recenter {
-  position: fixed; right: clamp(14px, 2.4vw, 32px); bottom: 24px; z-index: 30;
+  position: fixed; right: clamp(14px, 2.4vw, 32px); bottom: 82px; z-index: 30;
   display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 16px; border-radius: 999px;
   background: rgba(6, 26, 64, 0.85); border: 1px solid var(--line); font-weight: 700; font-size: 14px;
   opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.25s, transform 0.25s;
 }
 .recenter.is-visible { opacity: 1; transform: none; pointer-events: auto; }
 .recenter:hover { border-color: var(--ink); }
+.totop {
+  position: fixed; right: clamp(14px, 2.4vw, 32px); bottom: 22px; z-index: 30;
+  display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px 0 14px; border-radius: 999px;
+  background: rgba(6, 22, 58, 0.88); border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background 0.2s;
+}
+.totop.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+.totop:hover { border-color: var(--accent); }
+.totop:hover svg { color: var(--accent); transform: translateY(-2px); }
+.totop:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.totop img { height: 26px; width: auto; display: block; }
+.totop svg { transition: transform 0.2s, color 0.2s; }
 .drag-hint {
-  position: fixed; right: clamp(60px, 7vw, 110px); bottom: 30px; z-index: 5; pointer-events: none;
+  position: fixed; right: calc(clamp(14px, 2.4vw, 32px) + 120px); bottom: 37px; z-index: 5; pointer-events: none;
   font-size: 12px; color: var(--muted); letter-spacing: 0.02em;
 }
 
@@ -223,7 +237,21 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
   .lead { font-size: 15px; }
   .points { margin-top: 14px; gap: 6px; }
   .scroll-hint { display: none; }
-  .drag-hint { display: none; }
+  .totop {
+  position: fixed; right: clamp(14px, 2.4vw, 32px); bottom: 22px; z-index: 30;
+  display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px 0 14px; border-radius: 999px;
+  background: rgba(6, 22, 58, 0.88); border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s, border-color 0.2s, background 0.2s;
+}
+.totop.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+.totop:hover { border-color: var(--accent); }
+.totop:hover svg { color: var(--accent); transform: translateY(-2px); }
+.totop:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.totop img { height: 26px; width: auto; display: block; }
+.totop svg { transition: transform 0.2s, color 0.2s; }
+.drag-hint { display: none; }
   .team { margin: 0 auto 16px; padding-bottom: 14px; }
   .team-title { font-size: 16px; margin-bottom: 12px; text-align: center; }
   .team-row { gap: 10px; justify-content: center; }
@@ -239,7 +267,9 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
   .logo { top: 14px; gap: 14px; }
   .logo-mark { height: 38px; }
   .logo-portrait { width: 44px; height: 44px; }
-  .recenter { top: 16px; bottom: auto; right: 16px; height: 38px; }
+  .recenter { top: 14px; bottom: auto; right: auto; left: 14px; height: 40px; }
+  .totop { top: 14px; bottom: auto; right: 14px; height: 40px; padding: 0 12px 0 10px; gap: 8px; }
+  .totop img { height: 22px; }
   .hotspot-label { display: none; }
   .hotspot-dot { width: 26px; height: 26px; font-size: 10px; }
   .brand-mark { width: 36px; height: 36px; }

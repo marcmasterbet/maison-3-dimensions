@@ -137,7 +137,7 @@ function HotspotProjector() {
     HOTSPOTS.forEach((h, i) => {
       const el = hotspotEls[i];
       if (!el) return;
-      let o = Math.max(size.width >= 900 ? smooth(last - 0.5, last - 0.1, p) : 0, bell(h.section, 0.55, p));
+      let o = Math.max(1 - smooth(0.05, 0.35, p), smooth(last - 0.5, last - 0.1, p), bell(h.section, 0.55, p));
       if (h.normal) {
         dir.copy(camera.position).sub(h.pos).normalize();
         o *= smooth(0.0, 0.3, dir.dot(h.normal));
