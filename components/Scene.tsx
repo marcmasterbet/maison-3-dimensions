@@ -77,7 +77,9 @@ function CameraRig() {
     // sur téléphone, recul ajusté par section pour que la maison ne touche jamais les bords
     const mk = THREE.MathUtils.lerp(MOBILE_K[i], MOBILE_K[i + 1], e);
     const base = wide ? 1.95 : aspect < 0.6 ? 3.1 * mk : portrait ? 2.3 : 2.0;
-    const dist = THREE.MathUtils.lerp(base, heroDist, heroK);
+    // écran de fin (desktop) : la maison recule un peu et se décale à droite pour laisser la place au texte
+    const endK = wide ? smooth(SHOTS.length - 1.9, SHOTS.length - 1.1, p) : 0;
+    const dist = THREE.MathUtils.lerp(base, heroDist, heroK) * (1 + 0.14 * endK);
     const rel = pos.clone().sub(tgt).multiplyScalar(dist);
     // rotation libre de l'utilisateur
     orbit.y = THREE.MathUtils.damp(orbit.y, orbit.yaw, 8, dt);
@@ -95,7 +97,7 @@ function CameraRig() {
 
     // Décale le rendu pour laisser la place au texte (à gauche sur desktop, en bas sur mobile)
     const cam = camera as THREE.PerspectiveCamera;
-    const ox = wide ? -size.width * 0.17 * (1 - hero) : 0;
+    const ox = wide ? -size.width * (0.17 + 0.06 * endK) * (1 - hero) : 0;
     const mobileOy = size.height * (aspect < 0.6 ? 0.25 : portrait ? 0.16 : 0.12);
     const oy = wide ? heroOy * hero : THREE.MathUtils.lerp(mobileOy, heroOy, heroK);
     cam.fov = wide ? 32 : 44;

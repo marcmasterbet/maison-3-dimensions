@@ -131,7 +131,9 @@ export default function Experience() {
 
       <button className={`logo ${atTop ? "" : "is-hidden"}`} onClick={() => scrollToSection(0)} aria-label="Retour en haut">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={LOGO_SRC} alt="SK" width={360} height={275} />
+        <img className="logo-portrait" src={PORTRAITS[0]} alt="" width={320} height={320} />
+        <img className="logo-mark" src={LOGO_SRC} alt="SK" width={360} height={275} />
+        <img className="logo-portrait" src={PORTRAITS[1]} alt="" width={320} height={320} />
       </button>
 
       <nav className="rail" aria-label="Prestations">
@@ -162,10 +164,11 @@ export default function Experience() {
                 )}
                 {isEnd && (
                   <div className="portraits">
-                    {PORTRAITS.map((src) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img key={src} src={src} alt="" width={320} height={320} loading="lazy" />
-                    ))}
+                    {/* eslint-disable @next/next/no-img-element */}
+                    <img className="portrait" src={PORTRAITS[0]} alt="" width={320} height={320} loading="lazy" />
+                    <img className="portraits-logo" src={LOGO_SRC} alt="SK" width={360} height={275} />
+                    <img className="portrait" src={PORTRAITS[1]} alt="" width={320} height={320} loading="lazy" />
+                    {/* eslint-enable @next/next/no-img-element */}
                   </div>
                 )}
                 {isHero ? (
