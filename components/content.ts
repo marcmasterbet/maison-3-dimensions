@@ -3,6 +3,11 @@
 export const CONTACT_URL = "https://experts-conseil-habitat.fr/";
 export const ADDRESS = "Les bureaux de l'Arche, 13090 Aix-en-Provence";
 
+// Écran d'accueil (message de l'agence au prospect)
+// Lien du bouton : à remplacer par votre page de contact / prise de rendez-vous.
+export const HERO_CTA_URL = "#";
+export const HERO_CTA_LABEL = "Je découvre les possibilités gratuitement";
+
 export type Section = {
   id: string;
   index: string;
@@ -18,9 +23,9 @@ export const SECTIONS: Section[] = [
     id: "accueil",
     index: "",
     short: "Accueil",
-    title: "L'excellence sur votre toit.",
+    title: "Votre site n'a plus de limites.",
     text:
-      "Le médecin de votre habitat : nous recherchons l'origine des désordres avant de les traiter durablement, des fondations jusqu'au faîtage.",
+      "Voici une maquette 3D interactive, créée spécialement pour vous, qui illustre ce que nous sommes capables de réaliser pour votre futur site internet.",
   },
   {
     id: "humidite",
