@@ -15,7 +15,7 @@ export const orbit = {
   dragging: false,
 };
 // Bas du bloc de texte de l'accueil (en px), mesuré par Experience : la maison se cale en dessous.
-export const layout = { heroBottom: 0 };
+export const layout = { heroBottom: 0, endTop: 0 };
 export const PITCH_MIN = -0.35;
 export const PITCH_MAX = 0.55;
 
@@ -27,8 +27,15 @@ export const smooth = (a: number, b: number, x: number) => {
 export const bell = (center: number, width: number, x: number) =>
   smooth(center - width, center - width * 0.35, x) * (1 - smooth(center + width * 0.35, center + width, x));
 
+// Hauteur réelle d'une section. Sur téléphone elle diffère de window.innerHeight
+// (barre d'adresse qui se replie) : on mesure donc la section elle-même.
+export function sectionHeight() {
+  const el = document.querySelector<HTMLElement>(".panel");
+  return el?.offsetHeight || window.innerHeight;
+}
+
 export function scrollToSection(i: number) {
-  window.scrollTo({ top: i * window.innerHeight, behavior: "smooth" });
+  window.scrollTo({ top: i * sectionHeight(), behavior: "smooth" });
 }
 
 // ---- Scénario ----

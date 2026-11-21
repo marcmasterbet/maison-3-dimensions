@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { END_CTA_LABEL, END_CTA_URL, END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, PORTRAITS, SECTIONS } from "./content";
-import { layout, orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection } from "./scroll";
+import { END_CTA_LABEL, END_CTA_URL, END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, PORTRAITS, SECTIONS, TEAM, TEAM_TITLE } from "./content";
+import { layout, orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection, sectionHeight } from "./scroll";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
 import { hotspotEls, HOTSPOT_SECTIONS } from "./hotspots";
@@ -15,17 +15,22 @@ export default function Experience() {
   const [rotated, setRotated] = useState(false);
   const [atTop, setAtTop] = useState(true);
   const heroCard = useRef<HTMLDivElement>(null);
+  const endCard = useRef<HTMLDivElement>(null);
 
   // Mesure le bas du bloc de texte de l'accueil : la scène 3D cale la maison juste en dessous.
   useEffect(() => {
     const el = heroCard.current;
     if (!el) return;
+    const end = endCard.current;
     const measure = () => {
       layout.heroBottom = el.offsetTop + el.offsetHeight;
+      // haut du bloc de fin, relatif au haut de sa section
+      if (end) layout.endTop = end.offsetTop;
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
+    if (end) ro.observe(end);
     window.addEventListener("resize", measure);
     return () => {
       ro.disconnect();
@@ -73,7 +78,10 @@ export default function Experience() {
 
   useEffect(() => {
     const onScroll = () => {
-      const p = window.scrollY / window.innerHeight;
+      // fin de page = dernière section, même si la barre d'adresse du téléphone change la hauteur visible
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const raw = window.scrollY / sectionHeight();
+      const p = max > 0 && window.scrollY >= max - 2 ? last : Math.min(last, raw);
       scroll.target = p;
       setActive(Math.round(p));
       setAtTop(p < 0.12);
@@ -156,19 +164,34 @@ export default function Experience() {
           const isEnd = i === last;
           return (
             <section key={s.id} id={s.id} className={`panel ${isHero ? "panel-hero" : ""} ${active === i ? "is-active" : ""}`}>
-              <div ref={isHero ? heroCard : undefined} className={`card ${isHero || isEnd ? "card-lg" : ""}`}>
+              <div ref={isHero ? heroCard : isEnd ? endCard : undefined} className={`card ${isHero || isEnd ? "card-lg" : ""}`}>
                 {s.index && (
                   <p className="eyebrow">
                     <span className="eyebrow-num">{s.index}</span> Prestation
                   </p>
                 )}
                 {isEnd && (
-                  <div className="portraits">
-                    {/* eslint-disable @next/next/no-img-element */}
-                    <img className="portrait" src={PORTRAITS[0]} alt="" width={320} height={320} loading="lazy" />
-                    <img className="portraits-logo" src={LOGO_SRC} alt="SK" width={360} height={275} />
-                    <img className="portrait" src={PORTRAITS[1]} alt="" width={320} height={320} loading="lazy" />
-                    {/* eslint-enable @next/next/no-img-element */}
+                  <div className="team">
+                    <p className="team-title">{TEAM_TITLE}</p>
+                    <div className="team-row">
+                      {/* eslint-disable @next/next/no-img-element */}
+                      <figure>
+                        <img className="portrait" src={TEAM[0].photo} alt={TEAM[0].name} width={320} height={320} loading="lazy" />
+                        <figcaption>
+                          <strong>{TEAM[0].name}</strong>
+                          {TEAM[0].role}
+                        </figcaption>
+                      </figure>
+                      <img className="team-logo" src={LOGO_SRC} alt="Logo" width={360} height={275} />
+                      <figure>
+                        <img className="portrait" src={TEAM[1].photo} alt={TEAM[1].name} width={320} height={320} loading="lazy" />
+                        <figcaption>
+                          <strong>{TEAM[1].name}</strong>
+                          {TEAM[1].role}
+                        </figcaption>
+                      </figure>
+                      {/* eslint-enable @next/next/no-img-element */}
+                    </div>
                   </div>
                 )}
                 {isHero ? (

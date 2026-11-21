@@ -13,6 +13,11 @@ export const END_LINES = ["Pas un site assemblé, mais codé.", "Pas des mots po
 export const END_CTA_LABEL = "Je réserve mon échange gratuit";
 export const END_CTA_URL = "#"; // à remplacer par le lien de prise de rendez-vous
 export const PORTRAITS = ["/portrait-1.jpg", "/portrait-2.jpg"];
+export const TEAM_TITLE = "Deux experts. Plus de 40 ans d'expérience réunis.";
+export const TEAM = [
+  { name: "Jeff", role: "Copywriter depuis plus de 20 ans", photo: PORTRAITS[0] },
+  { name: "Marc", role: "Développeur web depuis plus de 20 ans", photo: PORTRAITS[1] },
+];
 
 export type Section = {
   id: string;

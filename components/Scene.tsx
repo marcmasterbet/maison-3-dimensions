@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { AdaptiveDpr, Environment, Lightformer, PerformanceMonitor } from "@react-three/drei";
+import { Environment, Lightformer, PerformanceMonitor } from "@react-three/drei";
 import { EffectComposer, N8AO, Vignette } from "@react-three/postprocessing";
 import { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
@@ -79,7 +79,13 @@ function CameraRig() {
     const base = wide ? 1.95 : aspect < 0.6 ? 3.1 * mk : portrait ? 2.3 : 2.0;
     // écran de fin (desktop) : la maison recule un peu et se décale à droite pour laisser la place au texte
     const endK = wide ? smooth(SHOTS.length - 1.9, SHOTS.length - 1.1, p) : 0;
-    const dist = THREE.MathUtils.lerp(base, heroDist, heroK) * (1 + 0.14 * endK);
+    // écran de fin (téléphone) : la maison tient dans la place libre au-dessus du bloc de texte
+    const endM = !wide ? smooth(SHOTS.length - 1.9, SHOTS.length - 1.1, p) : 0;
+    const endAvail = Math.max(110, (layout.endTop || size.height * 0.4) - 28);
+    const endDist = Math.max((HOUSE_FIT * 1.2) / (endAvail / size.height), HOUSE_FIT_W / aspect);
+    const endOy = size.height / 2 - (16 + endAvail / 2);
+    const dist =
+      THREE.MathUtils.lerp(THREE.MathUtils.lerp(base, heroDist, heroK), endDist, endM) * (1 + 0.14 * endK);
     const rel = pos.clone().sub(tgt).multiplyScalar(dist);
     // rotation libre de l'utilisateur
     orbit.y = THREE.MathUtils.damp(orbit.y, orbit.yaw, 8, dt);
@@ -99,7 +105,7 @@ function CameraRig() {
     const cam = camera as THREE.PerspectiveCamera;
     const ox = wide ? -size.width * (0.17 + 0.06 * endK) * (1 - hero) : 0;
     const mobileOy = size.height * (aspect < 0.6 ? 0.25 : portrait ? 0.16 : 0.12);
-    const oy = wide ? heroOy * hero : THREE.MathUtils.lerp(mobileOy, heroOy, heroK);
+    const oy = wide ? heroOy * hero : THREE.MathUtils.lerp(THREE.MathUtils.lerp(mobileOy, heroOy, heroK), endOy, endM);
     cam.fov = wide ? 32 : 44;
     cam.setViewOffset(size.width, size.height, ox, oy, size.width, size.height);
     cam.updateProjectionMatrix();
@@ -131,7 +137,7 @@ function HotspotProjector() {
     HOTSPOTS.forEach((h, i) => {
       const el = hotspotEls[i];
       if (!el) return;
-      let o = Math.max(smooth(last - 0.5, last - 0.1, p), bell(h.section, 0.55, p));
+      let o = Math.max(size.width >= 900 ? smooth(last - 0.5, last - 0.1, p) : 0, bell(h.section, 0.55, p));
       if (h.normal) {
         dir.copy(camera.position).sub(h.pos).normalize();
         o *= smooth(0.0, 0.3, dir.dot(h.normal));
@@ -186,17 +192,16 @@ const isMobile = () =>
 
 export default function Scene({ onReady }: { onReady?: () => void }) {
   const mobile = useMemo(isMobile, []);
-  const [high, setHigh] = useState(!mobile);
+  const [high, setHigh] = useState(true);
   return (
     <Canvas
       shadows
-      dpr={high ? [1, 2] : [1, 1.5]}
+      dpr={high ? (mobile ? [2, 2.5] : [1, 2]) : mobile ? [1.5, 2] : [1, 1.5]}
       camera={{ position: SHOTS[0][0].toArray(), fov: 32, near: 0.5, far: 160 }}
-      gl={{ antialias: mobile, powerPreference: "high-performance" }}
+      gl={{ antialias: true, powerPreference: "high-performance" }}
       onCreated={() => setTimeout(() => onReady?.(), 250)}
     >
-      <PerformanceMonitor onDecline={() => setHigh(false)} flipflops={2} />
-      <AdaptiveDpr pixelated={false} />
+      <PerformanceMonitor onDecline={() => setHigh(false)} bounds={() => [28, 55]} />
       <color attach="background" args={[BG]} />
       <fog attach="fog" args={[BG, 40, 95]} />
 
@@ -205,7 +210,7 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
         position={[9, 15, 8]}
         intensity={2.4}
         castShadow
-        shadow-mapSize={high ? [2048, 2048] : [1024, 1024]}
+        shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-11}
         shadow-camera-right={11}
         shadow-camera-top={11}
@@ -221,14 +226,14 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
         <Lightformer intensity={0.8} position={[8, 3, -6]} rotation-y={-Math.PI / 2} scale={[6, 2, 1]} color="#ffd9b0" />
       </Environment>
 
-      <House light={!high} />
+      <House light={mobile || !high} />
       <Ground />
       <HotspotProjector />
 
       <CameraRig />
       {high && (
         <EffectComposer multisampling={4}>
-          <N8AO aoRadius={0.9} intensity={2.2} distanceFalloff={0.6} quality="medium" />
+          <N8AO aoRadius={0.9} intensity={2.2} distanceFalloff={0.6} quality={mobile ? "performance" : "medium"} halfRes={mobile} />
           <Vignette offset={0.2} darkness={0.3} />
         </EffectComposer>
       )}
