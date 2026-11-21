@@ -1,13 +1,28 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { Component, useEffect, useRef, useState, type ReactNode } from "react";
 import { END_CTA_LABEL, END_CTA_URL, END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, PORTRAITS, SECTIONS, TEAM, TEAM_TITLE } from "./content";
 import { layout, orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection, sectionHeight } from "./scroll";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
 import { hotspotEls, HOTSPOT_SECTIONS } from "./hotspots";
 import { LOGO_SRC } from "./logo";
+
+// Si la 3D plante (mémoire graphique, WebGL indisponible), on réessaie une fois en mode sûr,
+// puis on laisse le site fonctionner sans la maison plutôt que d'afficher une page d'erreur.
+class Boundary extends Component<{ children: ReactNode; fallback: ReactNode; onError?: () => void }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch() {
+    this.props.onError?.();
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
 
 export default function Experience() {
   const [active, setActive] = useState(0);
@@ -98,7 +113,15 @@ export default function Experience() {
   return (
     <>
       <div className="stage" aria-hidden onPointerDown={onPointerDown}>
-        <Scene onReady={() => setReady(true)} />
+        <Boundary
+          fallback={
+            <Boundary fallback={null} onError={() => setReady(true)}>
+              <Scene safe onReady={() => setReady(true)} />
+            </Boundary>
+          }
+        >
+          <Scene onReady={() => setReady(true)} />
+        </Boundary>
       </div>
       <button className={`recenter ${rotated ? "is-visible" : ""}`} onClick={recenter}>
         <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden>

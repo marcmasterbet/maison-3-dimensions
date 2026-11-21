@@ -190,15 +190,18 @@ function Ground() {
 const isMobile = () =>
   typeof window !== "undefined" && (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 900);
 
-export default function Scene({ onReady }: { onReady?: () => void }) {
+export default function Scene({ onReady, safe = false }: { onReady?: () => void; safe?: boolean }) {
   const mobile = useMemo(isMobile, []);
-  const [high, setHigh] = useState(true);
+  const [high, setHigh] = useState(!safe);
+  // Effets de post-traitement : ordinateur uniquement. Sur téléphone (iOS surtout) ils peuvent
+  // saturer la mémoire graphique et faire planter la page ; la netteté vient de la résolution.
+  const effects = high && !mobile && !safe;
   return (
     <Canvas
       shadows
-      dpr={high ? (mobile ? [2, 2.5] : [1, 2]) : mobile ? [1.5, 2] : [1, 1.5]}
+      dpr={safe ? 1 : high ? (mobile ? [1.5, 2] : [1, 2]) : [1, 1.5]}
       camera={{ position: SHOTS[0][0].toArray(), fov: 32, near: 0.5, far: 160 }}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      gl={{ antialias: !safe, powerPreference: safe ? "default" : "high-performance", failIfMajorPerformanceCaveat: false }}
       onCreated={() => setTimeout(() => onReady?.(), 250)}
     >
       <PerformanceMonitor onDecline={() => setHigh(false)} bounds={() => [28, 55]} />
@@ -210,7 +213,7 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
         position={[9, 15, 8]}
         intensity={2.4}
         castShadow
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={mobile || safe ? [1024, 1024] : [2048, 2048]}
         shadow-camera-left={-11}
         shadow-camera-right={11}
         shadow-camera-top={11}
@@ -231,9 +234,9 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
       <HotspotProjector />
 
       <CameraRig />
-      {high && (
+      {effects && (
         <EffectComposer multisampling={4}>
-          <N8AO aoRadius={0.9} intensity={2.2} distanceFalloff={0.6} quality={mobile ? "performance" : "medium"} halfRes={mobile} />
+          <N8AO aoRadius={0.9} intensity={2.2} distanceFalloff={0.6} quality="medium" />
           <Vignette offset={0.2} darkness={0.3} />
         </EffectComposer>
       )}
