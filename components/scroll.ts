@@ -14,6 +14,8 @@ export const orbit = {
   x: 0,
   dragging: false,
 };
+// Bas du bloc de texte de l'accueil (en px), mesuré par Experience : la maison se cale en dessous.
+export const layout = { heroBottom: 0 };
 export const PITCH_MIN = -0.35;
 export const PITCH_MAX = 0.55;
 

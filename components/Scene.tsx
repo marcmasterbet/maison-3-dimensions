@@ -9,9 +9,9 @@ import House, { VMC_POS, VENT_POS } from "./House";
 import { D, T, THETA, W, WALL_H, gutterLine } from "./geometry";
 import { SECTIONS } from "./content";
 import { hotspotEls } from "./hotspots";
-import { bell, orbit, scroll, smooth } from "./scroll";
+import { bell, layout, orbit, scroll, smooth } from "./scroll";
 
-const BG = "#061a40";
+const BG = "#0a1f4d";
 
 // Une position de caméra (et un point visé) par section.
 const v = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
@@ -27,6 +27,12 @@ const SHOTS: [THREE.Vector3, THREE.Vector3][] = [
   [v(6, 2.2, 11), v(0.4, 1.6, 1)], // rongeurs
   [v(-12, 7, 12), v(0, 2.9, 0)], // contact
 ];
+
+// Calage de la maison sur l'accueil (desktop)
+const HERO_GAP = 18; // marge sous le bouton (px)
+const HERO_BOTTOM = 44; // marge en bas d'écran (px)
+const HOUSE_FIT = 0.97; // hauteur de la maison (fraction d'écran) à distance 1
+const HOUSE_CENTER = 0.0; // correction du centre visuel (fraction d'écran)
 
 function CameraRig() {
   const { camera, size, pointer } = useThree();
@@ -52,10 +58,15 @@ function CameraRig() {
     // Accueil (desktop) : texte centré en haut, maison centrée en dessous, un peu plus grande.
     const heroK = 1 - smooth(0.05, 0.9, p);
     const hero = wide ? heroK : 0;
-    // maison plus grande sur l'accueil, dosé selon la place disponible
-    const zoomAmt = wide ? (size.height < 800 ? 0.1 : 0.2) : aspect < 0.6 ? 0.3 : 0.05;
-    const zoom = 1 - zoomAmt * heroK;
-    const rel = pos.clone().sub(tgt).multiplyScalar((wide ? 1.95 : aspect < 0.6 ? 3.0 : portrait ? 2.3 : 2.0) * zoom);
+    // Accueil desktop : la maison occupe exactement la place libre sous le bouton (mesurée en px).
+    const top = (layout.heroBottom || size.height * 0.4) + HERO_GAP;
+    const availPx = Math.max(120, size.height - top - HERO_BOTTOM);
+    const heroDist = THREE.MathUtils.clamp(HOUSE_FIT / (availPx / size.height), 1.2, 4);
+    const heroOy = -(top + availPx / 2 - size.height / 2) + size.height * HOUSE_CENTER;
+    const base = wide ? 1.95 : aspect < 0.6 ? 3.0 : portrait ? 2.3 : 2.0;
+    const mobileZoom = 1 - (aspect < 0.6 ? 0.3 : 0.05) * heroK;
+    const dist = wide ? THREE.MathUtils.lerp(base, heroDist, heroK) : base * mobileZoom;
+    const rel = pos.clone().sub(tgt).multiplyScalar(dist);
     // rotation libre de l'utilisateur
     orbit.y = THREE.MathUtils.damp(orbit.y, orbit.yaw, 8, dt);
     orbit.x = THREE.MathUtils.damp(orbit.x, orbit.pitch, 8, dt);
@@ -73,7 +84,7 @@ function CameraRig() {
     // Décale le rendu pour laisser la place au texte (à gauche sur desktop, en bas sur mobile)
     const cam = camera as THREE.PerspectiveCamera;
     const ox = wide ? -size.width * 0.17 * (1 - hero) : 0;
-    const oy = wide ? -size.height * 0.15 * hero : size.height * (aspect < 0.6 ? 0.26 : portrait ? 0.16 : 0.12);
+    const oy = wide ? heroOy * hero : size.height * (aspect < 0.6 ? 0.26 : portrait ? 0.16 : 0.12);
     cam.fov = wide ? 32 : 44;
     cam.setViewOffset(size.width, size.height, ox, oy, size.width, size.height);
     cam.updateProjectionMatrix();
@@ -124,12 +135,32 @@ function HotspotProjector() {
   return null;
 }
 
+// Sol invisible : fond bleu uni (pas de ligne d'horizon), seule l'ombre de la maison est dessinée,
+// avec un halo doux sous la maison pour la détacher du fond.
 function Ground() {
+  const glow = useMemo(() => {
+    const c = document.createElement("canvas");
+    c.width = c.height = 256;
+    const g = c.getContext("2d")!;
+    const grd = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+    grd.addColorStop(0, "rgba(90,125,210,0.42)");
+    grd.addColorStop(0.5, "rgba(70,105,190,0.16)");
+    grd.addColorStop(1, "rgba(60,95,180,0)");
+    g.fillStyle = grd;
+    g.fillRect(0, 0, 256, 256);
+    return new THREE.CanvasTexture(c);
+  }, []);
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]} receiveShadow>
-      <circleGeometry args={[60, 64]} />
-      <meshStandardMaterial color="#0a2556" roughness={0.9} />
-    </mesh>
+    <group>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
+        <circleGeometry args={[17, 64]} />
+        <meshBasicMaterial map={glow} transparent depthWrite={false} fog={false} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]} receiveShadow>
+        <circleGeometry args={[40, 48]} />
+        <shadowMaterial transparent opacity={0.38} />
+      </mesh>
+    </group>
   );
 }
 
@@ -183,7 +214,7 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
       {high && (
         <EffectComposer multisampling={4}>
           <N8AO aoRadius={0.9} intensity={2.2} distanceFalloff={0.6} quality="medium" />
-          <Vignette offset={0.25} darkness={0.55} />
+          <Vignette offset={0.2} darkness={0.3} />
         </EffectComposer>
       )}
     </Canvas>

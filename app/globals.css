@@ -1,5 +1,5 @@
 :root {
-  --bg: #061a40;
+  --bg: #0a1f4d;
   --ink: #f4f7fb;
   --muted: #b5c3dc;
   --line: rgba(255, 255, 255, 0.12);
@@ -185,11 +185,11 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
 @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
 
 /* ---------- Accueil façon landing page ---------- */
-.panel-hero { justify-content: center; align-items: flex-start; padding-top: clamp(90px, 13vh, 140px); }
-.panel-hero .card-lg { width: min(980px, 100%); padding: 0; text-align: center; }
-.panel-hero h1 { white-space: nowrap; font-size: clamp(42px, 5vw, 80px); letter-spacing: -0.035em; }
-.panel-hero .lead { margin: 18px auto 0; max-width: 640px; font-size: clamp(17px, 1.25vw, 20px); color: #c9d4e8; }
-.panel-hero .actions { justify-content: center; margin-top: 26px; }
+.panel-hero { justify-content: center; align-items: flex-start; padding-top: clamp(48px, 8vh, 100px); }
+.panel-hero .card-lg { width: 100%; padding: 0; text-align: center; }
+.panel-hero h1 { white-space: nowrap; font-size: clamp(40px, min(5vw, 8.2vh), 84px); letter-spacing: -0.035em; }
+.panel-hero .lead { margin: 14px auto 0; max-width: 46em; font-size: clamp(16px, min(1.2vw, 2.2vh), 20px); color: #c9d4e8; text-wrap: balance; }
+.panel-hero .actions { justify-content: center; margin-top: 20px; }
 
 .panel-hero .scroll-hint { left: clamp(18px, 5vw, 72px); transform: none; align-items: flex-start; }
 

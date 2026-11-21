@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CONTACT_URL, HERO_CTA_LABEL, HERO_CTA_URL, SECTIONS } from "./content";
-import { orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection } from "./scroll";
+import { layout, orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection } from "./scroll";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
 import { hotspotEls, HOTSPOT_SECTIONS } from "./hotspots";
@@ -14,6 +14,24 @@ export default function Experience() {
   const [ready, setReady] = useState(false);
   const [rotated, setRotated] = useState(false);
   const [atTop, setAtTop] = useState(true);
+  const heroCard = useRef<HTMLDivElement>(null);
+
+  // Mesure le bas du bloc de texte de l'accueil : la scène 3D cale la maison juste en dessous.
+  useEffect(() => {
+    const el = heroCard.current;
+    if (!el) return;
+    const measure = () => {
+      layout.heroBottom = el.offsetTop + el.offsetHeight;
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   // Cliquer-glisser (ou glisser au doigt) pour tourner la maison à 360°.
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -136,7 +154,7 @@ export default function Experience() {
           const isEnd = i === last;
           return (
             <section key={s.id} id={s.id} className={`panel ${isHero ? "panel-hero" : ""} ${active === i ? "is-active" : ""}`}>
-              <div className={`card ${isHero || isEnd ? "card-lg" : ""}`}>
+              <div ref={isHero ? heroCard : undefined} className={`card ${isHero || isEnd ? "card-lg" : ""}`}>
                 {s.index && (
                   <p className="eyebrow">
                     <span className="eyebrow-num">{s.index}</span> Prestation
