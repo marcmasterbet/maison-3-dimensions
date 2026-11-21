@@ -48,7 +48,14 @@ function CameraRig() {
     const ang = Math.sin(state.clock.elapsedTime * 0.12) * 0.28 * idle + pointer.x * 0.06;
     const wide = size.width >= 900;
     const portrait = size.height > size.width;
-    const rel = pos.clone().sub(tgt).multiplyScalar(wide ? 1.95 : portrait ? 3.0 : 2.0);
+    const aspect = size.width / size.height;
+    // Accueil (desktop) : texte centré en haut, maison centrée en dessous, un peu plus grande.
+    const heroK = 1 - smooth(0.05, 0.9, p);
+    const hero = wide ? heroK : 0;
+    // maison plus grande sur l'accueil, dosé selon la place disponible
+    const zoomAmt = wide ? (size.height < 800 ? 0.1 : 0.2) : aspect < 0.6 ? 0.3 : 0.05;
+    const zoom = 1 - zoomAmt * heroK;
+    const rel = pos.clone().sub(tgt).multiplyScalar((wide ? 1.95 : aspect < 0.6 ? 3.0 : portrait ? 2.3 : 2.0) * zoom);
     // rotation libre de l'utilisateur
     orbit.y = THREE.MathUtils.damp(orbit.y, orbit.yaw, 8, dt);
     orbit.x = THREE.MathUtils.damp(orbit.x, orbit.pitch, 8, dt);
@@ -65,8 +72,8 @@ function CameraRig() {
 
     // Décale le rendu pour laisser la place au texte (à gauche sur desktop, en bas sur mobile)
     const cam = camera as THREE.PerspectiveCamera;
-    const ox = wide ? -size.width * 0.17 : 0;
-    const oy = wide ? 0 : size.height * (portrait ? 0.26 : 0.12);
+    const ox = wide ? -size.width * 0.17 * (1 - hero) : 0;
+    const oy = wide ? -size.height * 0.15 * hero : size.height * (aspect < 0.6 ? 0.26 : portrait ? 0.16 : 0.12);
     cam.fov = wide ? 32 : 44;
     cam.setViewOffset(size.width, size.height, ox, oy, size.width, size.height);
     cam.updateProjectionMatrix();
@@ -98,7 +105,7 @@ function HotspotProjector() {
     HOTSPOTS.forEach((h, i) => {
       const el = hotspotEls[i];
       if (!el) return;
-      let o = Math.max(1 - smooth(0.05, 0.35, p), smooth(last - 0.5, last - 0.1, p), bell(h.section, 0.55, p));
+      let o = Math.max(smooth(last - 0.5, last - 0.1, p), bell(h.section, 0.55, p));
       if (h.normal) {
         dir.copy(camera.position).sub(h.pos).normalize();
         o *= smooth(0.0, 0.3, dir.dot(h.normal));

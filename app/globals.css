@@ -73,6 +73,8 @@ a { color: inherit; text-decoration: none; }
   position: fixed; z-index: 30; top: 22px; left: clamp(18px, 5vw, 72px);
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
 }
+.logo { transition: opacity 0.35s ease, transform 0.35s ease; }
+.logo.is-hidden { opacity: 0; transform: translateY(-12px); pointer-events: none; }
 .logo img { display: block; height: 58px; width: auto; }
 .logo:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 6px; }
 
@@ -182,6 +184,15 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
 .hotspot:hover .hotspot-label, .hotspot[data-active="1"] .hotspot-label { opacity: 1; transform: none; }
 @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
 
+/* ---------- Accueil façon landing page ---------- */
+.panel-hero { justify-content: center; align-items: flex-start; padding-top: clamp(90px, 13vh, 140px); }
+.panel-hero .card-lg { width: min(980px, 100%); padding: 0; text-align: center; }
+.panel-hero h1 { white-space: nowrap; font-size: clamp(42px, 5vw, 80px); letter-spacing: -0.035em; }
+.panel-hero .lead { margin: 18px auto 0; max-width: 640px; font-size: clamp(17px, 1.25vw, 20px); color: #c9d4e8; }
+.panel-hero .actions { justify-content: center; margin-top: 26px; }
+
+.panel-hero .scroll-hint { left: clamp(18px, 5vw, 72px); transform: none; align-items: flex-start; }
+
 /* ---------- Mobile ---------- */
 @media (max-width: 899px) {
   .brand-name small { display: none; }
@@ -201,6 +212,11 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
   .brand-mark { width: 36px; height: 36px; }
   .brand-name { font-size: 14px; }
   h1 { font-size: 34px; }
+  .panel-hero { align-items: flex-end; padding-top: 24px; }
+  .panel-hero .card-lg { text-align: left; }
+  .panel-hero h1 { font-size: 5.6vw; }
+  .panel-hero .lead { margin-left: 0; font-size: 15px; }
+  .panel-hero .actions { justify-content: flex-start; }
 }
 
 @media (prefers-reduced-motion: reduce) {

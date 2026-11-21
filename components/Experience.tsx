@@ -13,6 +13,7 @@ export default function Experience() {
   const [active, setActive] = useState(0);
   const [ready, setReady] = useState(false);
   const [rotated, setRotated] = useState(false);
+  const [atTop, setAtTop] = useState(true);
 
   // Cliquer-glisser (ou glisser au doigt) pour tourner la maison à 360°.
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -57,6 +58,7 @@ export default function Experience() {
       const p = window.scrollY / window.innerHeight;
       scroll.target = p;
       setActive(Math.round(p));
+      setAtTop(p < 0.12);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -109,7 +111,7 @@ export default function Experience() {
       </div>
 
 
-      <button className="logo" onClick={() => scrollToSection(0)} aria-label="Retour en haut">
+      <button className={`logo ${atTop ? "" : "is-hidden"}`} onClick={() => scrollToSection(0)} aria-label="Retour en haut">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={LOGO_SRC} alt="SK" width={360} height={275} />
       </button>
@@ -133,7 +135,7 @@ export default function Experience() {
           const isHero = i === 0;
           const isEnd = i === last;
           return (
-            <section key={s.id} id={s.id} className={`panel ${active === i ? "is-active" : ""}`}>
+            <section key={s.id} id={s.id} className={`panel ${isHero ? "panel-hero" : ""} ${active === i ? "is-active" : ""}`}>
               <div className={`card ${isHero || isEnd ? "card-lg" : ""}`}>
                 {s.index && (
                   <p className="eyebrow">
