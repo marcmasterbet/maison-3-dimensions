@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Component, useEffect, useRef, useState, type ReactNode } from "react";
-import { END_CTA_LABEL, END_CTA_URL, END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, PORTRAITS, SECTIONS, TEAM, TEAM_TITLE } from "./content";
+import { END_CTA_LABEL, END_CTA_URL, END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, HERO_TAGLINE, PORTRAITS, SECTIONS, TEAM, TEAM_TITLE } from "./content";
 import { layout, orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection, sectionHeight } from "./scroll";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
@@ -244,6 +244,7 @@ export default function Experience() {
                     ))}
                   </ul>
                 )}
+                {isHero && <p className="tagline">{HERO_TAGLINE}</p>}
                 {isHero && (
                   <div className="actions">
                     <a className="btn btn-primary" href={HERO_CTA_URL}>

@@ -223,6 +223,7 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
 .panel-hero .card-lg { width: 100%; padding: 0; text-align: center; }
 .panel-hero h1 { white-space: nowrap; font-size: clamp(40px, min(5vw, 8.2vh), 84px); letter-spacing: -0.035em; }
 .panel-hero .lead { margin: 14px auto 0; max-width: 46em; font-size: clamp(16px, min(1.2vw, 2.2vh), 20px); color: #c9d4e8; text-wrap: balance; }
+.panel-hero .tagline { margin: 12px auto 0; font-style: italic; font-weight: 600; font-size: clamp(15px, min(1.1vw, 2vh), 18px); color: var(--ink); text-wrap: balance; }
 .panel-hero .actions { justify-content: center; margin-top: 20px; }
 
 .panel-hero .scroll-hint { left: clamp(18px, 5vw, 72px); transform: none; align-items: flex-start; }
@@ -278,7 +279,8 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
   .panel-hero { align-items: flex-start; padding: 78px 16px 24px; }
   .panel-hero h1 { font-size: min(6.3vw, 40px); }
   .panel-hero .lead { margin-top: 10px; font-size: clamp(12.5px, 3.5vw, 16px); line-height: 1.5; max-width: 34em; }
-  .panel-hero .actions { margin-top: 16px; }
+  .panel-hero .tagline { margin-top: 8px; font-size: clamp(12.5px, 3.4vw, 15px); }
+  .panel-hero .actions { margin-top: 14px; }
   .panel-hero .btn { height: 46px; padding: 0 20px; font-size: 14px; }
 }
 

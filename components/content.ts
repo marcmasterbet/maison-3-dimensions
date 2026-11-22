@@ -6,6 +6,7 @@ export const ADDRESS = "Les bureaux de l'Arche, 13090 Aix-en-Provence";
 // Écran d'accueil (message de l'agence au prospect)
 // Lien du bouton : à remplacer par votre page de contact / prise de rendez-vous.
 export const HERO_CTA_URL = "#";
+export const HERO_TAGLINE = "Une maison pour l'exemple. Des possibilités sans limites pour votre métier.";
 export const HERO_CTA_LABEL = "Je découvre les possibilités gratuitement";
 
 // Écran de fin (message de l'agence)
