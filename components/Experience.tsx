@@ -55,7 +55,7 @@ export default function Experience() {
 
   // Cliquer-glisser (ou glisser au doigt) pour tourner la maison à 360°.
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 && e.button !== 2) return; // clic gauche ou droit
     const el = e.currentTarget;
     el.setPointerCapture(e.pointerId);
     orbit.dragging = true;
@@ -112,7 +112,7 @@ export default function Experience() {
 
   return (
     <>
-      <div className="stage" aria-hidden onPointerDown={onPointerDown}>
+      <div className="stage" aria-hidden onPointerDown={onPointerDown} onContextMenu={(e) => e.preventDefault()}>
         <Boundary
           fallback={
             <Boundary fallback={null} onError={() => setReady(true)}>
@@ -251,6 +251,15 @@ export default function Experience() {
                       {HERO_CTA_LABEL}
                     </a>
                   </div>
+                )}
+                {isHero && (
+                  <p className="rotate-note">
+                    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden>
+                      <path d="M16 10a6 6 0 1 1-2-4.5M16 3v3.5h-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="only-desktop">Cliquez et glissez sur la maison pour la faire tourner à 360°</span>
+                    <span className="only-touch">Glissez sur la maison pour la tourner à 360°</span>
+                  </p>
                 )}
                 {isEnd && (
                   <p className="contact-line">
