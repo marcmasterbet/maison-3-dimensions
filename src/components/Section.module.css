@@ -1,0 +1,253 @@
+/* Fond : couleur du bloc, qui se fond dans celle du bloc suivant (--suivant) */
+.section {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    var(--couleur) 0%,
+    var(--couleur) calc(100% - 120px),
+    var(--suivant, var(--couleur)) 100%
+  );
+}
+
+.ivoire {
+  --couleur: var(--ivoire);
+}
+.sauge {
+  --couleur: var(--sauge);
+}
+.sable {
+  --couleur: var(--sable);
+}
+
+.inner {
+  max-width: var(--contenu-max);
+  margin: 0 auto;
+  padding: clamp(36px, 4vw, 56px) var(--marge);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 40px 64px;
+}
+
+.inverse {
+  flex-direction: row-reverse;
+}
+
+.text {
+  flex: 1 1 460px;
+  min-width: 0;
+  max-width: 640px;
+}
+
+.title {
+  margin: 0 0 22px;
+  font-family: var(--font-titre), Georgia, serif;
+  font-weight: 350;
+  font-size: clamp(32px, 3.6vw, 52px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.title em {
+  color: var(--framboise);
+}
+
+.paragraph {
+  margin: 16px 0 0;
+}
+
+.title + .paragraph,
+.text > .paragraph:first-child {
+  margin-top: 0;
+}
+
+/* Variantes de paragraphes */
+.fort {
+  margin-top: 30px;
+  font-family: var(--font-titre), Georgia, serif;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--olive);
+}
+
+.citation {
+  margin-top: 26px;
+  margin-bottom: 26px;
+  padding-left: 22px;
+  border-left: 2px solid var(--framboise);
+  font-family: var(--font-titre), Georgia, serif;
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--framboise);
+}
+
+.signature {
+  font-family: var(--font-titre), Georgia, serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--framboise);
+}
+
+.signature + .signature {
+  margin-top: 0;
+}
+
+.ctaWrap {
+  display: inline-block;
+  margin-top: 26px;
+  text-decoration: none;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--framboise);
+  color: #fff;
+  text-decoration: none;
+  padding: 15px 28px 15px 30px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 22px rgba(137, 48, 65, 0.22);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Petite flèche qui avance au survol */
+.ctaRecto::after {
+  content: "";
+  width: 18px;
+  height: 10px;
+  flex: 0 0 auto;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 10'%3E%3Cpath d='M0 5h16M12 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 10'%3E%3Cpath d='M0 5h16M12 1l4 4-4 4' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 0.25s ease;
+}
+
+.ctaWrap:hover .ctaRecto::after,
+.ctaWrap:focus-visible .ctaRecto::after {
+  transform: translateX(4px);
+}
+
+a.cta:hover,
+.ctaWrap:hover .cta {
+  background: var(--framboise-fonce);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(137, 48, 65, 0.3);
+}
+
+.ctaVerso,
+.ctaWrap:hover .ctaVerso {
+  background: var(--olive);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(70, 91, 39, 0.25);
+}
+
+.photo {
+  position: relative;
+  flex: 1 1 300px;
+  max-width: 420px;
+  height: 480px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.photo img {
+  object-fit: cover;
+}
+
+/* Photo avec légende */
+.figure {
+  flex: 0 1 400px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+}
+
+.figure .photo {
+  flex: none;
+  width: 100%;
+  max-width: 400px;
+}
+
+.legende {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: var(--font-titre), Georgia, serif;
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.4;
+  color: var(--framboise);
+}
+
+/* Portrait rond */
+.rond {
+  flex: 0 1 400px;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: 0 0 0 10px var(--ivoire), 0 0 0 11px var(--sable);
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background: var(--sauge);
+  border: 1.5px solid #b5c4ac;
+  border-radius: 4px;
+}
+
+.sauge .placeholder,
+.sable .placeholder {
+  background: var(--ivoire);
+  border-color: #d9cab0;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    gap: 36px;
+  }
+  .inverse {
+    flex-direction: row;
+  }
+  .photo {
+    flex-basis: 100%;
+    max-width: none;
+    height: auto;
+    aspect-ratio: 1;
+    max-height: 380px;
+  }
+  /* Emplacement sans photo : masqué sur téléphone */
+  .vide {
+    display: none;
+  }
+  .title {
+    margin-bottom: 18px;
+    font-size: 28px;
+  }
+  .paragraph {
+    margin-top: 16px;
+  }
+  .rond {
+    flex-basis: auto;
+    width: min(300px, 80vw);
+    height: auto;
+    margin: 0 auto;
+  }
+  .figure {
+    flex-basis: 100%;
+  }
+  .ctaWrap {
+    display: block;
+    text-align: center;
+  }
+}

@@ -1,0 +1,167 @@
+/* ——— Liste des articles ——— */
+.list {
+  max-width: var(--contenu-max);
+  margin: 0 auto;
+  padding: 20px var(--marge) clamp(48px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 32px 32px 64px;
+  background: var(--rose);
+  border: 1px solid #e2c8c0;
+  border-radius: 6px;
+  color: var(--encre);
+  text-decoration: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.card:hover {
+  color: var(--encre);
+  border-color: var(--framboise);
+  box-shadow: 0 14px 34px rgba(43, 39, 35, 0.1);
+  transform: translateY(-2px);
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-titre), Georgia, serif;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.cardExcerpt {
+  margin: 0;
+  font-size: 16px;
+  color: var(--texte-doux);
+}
+
+.cardMore {
+  position: absolute;
+  left: 32px;
+  bottom: 24px;
+  font-size: 20px;
+  color: var(--framboise);
+  transition: transform 0.25s ease;
+}
+
+.card:hover .cardMore {
+  transform: translateX(4px);
+}
+
+/* ——— Article ——— */
+.article {
+  padding: 112px var(--marge) clamp(96px, 10vw, 140px);
+  background: linear-gradient(180deg, var(--ivoire) 0%, var(--ivoire) calc(100% - 180px), var(--terracotta) 100%);
+}
+
+.articleHeader,
+.body {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.back {
+  display: inline-block;
+  padding: 10px 0;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--olive);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--framboise);
+}
+
+.articleTitle {
+  margin: 0;
+  font-family: var(--font-titre), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(36px, 4.4vw, 58px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.body {
+  margin-top: 28px;
+  font-size: 19px;
+  line-height: 1.75;
+}
+
+.body h2 {
+  margin: 38px 0 12px;
+  font-family: var(--font-titre), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(26px, 2.6vw, 32px);
+  line-height: 1.2;
+  color: var(--framboise);
+}
+
+.body p {
+  margin: 0 0 16px;
+}
+
+.intro p {
+  font-size: 21px;
+  line-height: 1.6;
+  color: var(--texte-doux);
+}
+
+.intro p:first-child::first-letter {
+  float: left;
+  font-family: var(--font-titre), Georgia, serif;
+  font-size: 72px;
+  line-height: 0.85;
+  padding: 6px 10px 0 0;
+  color: var(--framboise);
+}
+
+/* Bouton d'appel, même style que le reste du site */
+.ctaWrap {
+  display: inline-block;
+  margin-top: 28px;
+}
+
+.cta {
+  padding: 15px 30px;
+  border-radius: 999px;
+  background: var(--framboise);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 22px rgba(137, 48, 65, 0.22);
+}
+
+.ctaVerso {
+  background: var(--olive);
+  box-shadow: 0 8px 22px rgba(70, 91, 39, 0.25);
+}
+
+@media (max-width: 900px) {
+  .article {
+    padding-top: 104px;
+  }
+  .body {
+    font-size: 17px;
+  }
+  .intro p {
+    font-size: 19px;
+  }
+  .list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ctaWrap {
+    display: block;
+  }
+}
