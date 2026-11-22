@@ -11,8 +11,6 @@ export const HERO_CTA_LABEL = "Je découvre les possibilités gratuitement";
 
 // Écran de fin (message de l'agence)
 export const END_LINES = ["Pas un site assemblé, mais codé.", "Pas des mots pour remplir, mais pour faire agir."];
-export const END_CTA_LABEL = "Je réserve mon échange gratuit";
-export const END_CTA_URL = "#"; // à remplacer par le lien de prise de rendez-vous
 export const PORTRAITS = ["/portrait-1.jpg", "/portrait-2.jpg"];
 export const TEAM_TITLE = "Deux experts. Plus de 40 ans d'expérience réunis.";
 export const TEAM = [

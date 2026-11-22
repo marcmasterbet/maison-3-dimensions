@@ -288,3 +288,8 @@ h2 { font-size: clamp(26px, 3vw, 36px); line-height: 1.1; letter-spacing: -0.02e
   .card, .btn, .hotspot { transition: none; }
   .scroll-hint span, .hotspot-dot::after, .veil-bar::after { animation: none; }
 }
+
+.contact-line { margin: 26px 0 0; font-size: clamp(16px, 1.5vw, 20px); font-weight: 600; color: var(--ink); line-height: 1.6; }
+.contact-line a { color: var(--accent); text-decoration: none; white-space: nowrap; border-bottom: 1px solid rgba(244,162,76,.45); }
+.contact-line a:hover { border-bottom-color: var(--accent); }
+@media (min-width: 900px) { .contact-line { white-space: nowrap; } }

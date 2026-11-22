@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Component, useEffect, useRef, useState, type ReactNode } from "react";
-import { END_CTA_LABEL, END_CTA_URL, END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, HERO_TAGLINE, PORTRAITS, SECTIONS, TEAM, TEAM_TITLE } from "./content";
+import { END_LINES, HERO_CTA_LABEL, HERO_CTA_URL, HERO_TAGLINE, PORTRAITS, SECTIONS, TEAM, TEAM_TITLE } from "./content";
 import { layout, orbit, PITCH_MAX, PITCH_MIN, scroll, scrollToSection, sectionHeight } from "./scroll";
 
 const Scene = dynamic(() => import("./Scene"), { ssr: false });
@@ -253,11 +253,11 @@ export default function Experience() {
                   </div>
                 )}
                 {isEnd && (
-                  <div className="actions">
-                    <a className="btn btn-primary" href={END_CTA_URL}>
-                      {END_CTA_LABEL}
-                    </a>
-                  </div>
+                  <p className="contact-line">
+                    Pour nous contacter :{" "}
+                    <a href="mailto:contact@seokraft.fr">contact@seokraft.fr</a> ou{" "}
+                    <a href="tel:+33682103487">06 82 10 34 87</a>
+                  </p>
                 )}
               </div>
               {isHero && (
